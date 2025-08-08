@@ -100,7 +100,6 @@
 				726B5C7C2DD5B21D004524E1 /* CI.xctestplan */,
 				080EDEF321B6DA7E00813479 /* EssentialFeed */,
 				080EDEFE21B6DA7E00813479 /* EssentialFeedTests */,
-				726B5C712DD5AB2C004524E1 /* EssentialFeedAPIEndToEndTests */,
 				080EDEF221B6DA7E00813479 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -131,6 +130,7 @@
 			children = (
 				080EDF0121B6DA7E00813479 /* Info.plist */,
 				729048E92D9B040400390E59 /* EssentialFeedTests-Bridging-Header.h */,
+				726B5C712DD5AB2C004524E1 /* EssentialFeedAPIEndToEndTests */,
 				726B5C622DD1BC44004524E1 /* Feed API */,
 			);
 			path = EssentialFeedTests;
