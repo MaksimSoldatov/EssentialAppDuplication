@@ -27,11 +27,15 @@ final class LocalFeedLoader {
         self.currentDate = currentDate
     }
     
-    func save(_ items: [FeedItem], completion: @escaping (Result<(), Error>) -> Void) {
-        store.deleteCacheFeed() { [unowned self] result in
+    func save(_ items: [FeedItem], completion: @escaping (Result<Void, Error>) -> Void) {
+        store.deleteCacheFeed() { [weak self] result in
+            guard let self else { return }
             switch result {
             case .success():
-                store.insert(items, timestamp: currentDate(), completion: completion)
+                store.insert(items, timestamp: currentDate(), completion: { [weak self] result in
+                    guard self != nil else { return }
+                    completion(result)
+                })
             case .failure(let error):
                 completion(.failure(error))
             }
@@ -110,6 +114,31 @@ final class CacheFeedUseCaseTests: XCTestCase {
             store.completeDeletionSuccessfully()
             store.completeInsertionSuccessfully()
         }
+    }
+    
+    func test_save_doesNotDeliverDeletionErrorAfterSUTHasBeenDeallocated() {
+        let store = FeedStoreSpy()
+        var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
+        
+        var receivedResults = [Result<Void, Error>]()
+        sut?.save([uniqueItem(), uniqueItem()]) { receivedResults.append($0) }
+        sut = nil
+        store.completeDeletion(with: anyNSError())
+        
+        XCTAssertTrue(receivedResults.isEmpty)
+    }
+    
+    func test_save_doesNotDeliverInsertionErrorAfterSUTHasBeenDeallocated() {
+        let store = FeedStoreSpy()
+        var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
+        
+        var receivedResults = [Result<Void, Error>]()
+        sut?.save([uniqueItem(), uniqueItem()]) { receivedResults.append($0) }
+        store.completeDeletionSuccessfully()
+        sut = nil
+        store.completeInsertion(with: anyNSError())
+        
+        XCTAssertTrue(receivedResults.isEmpty)
     }
     
     // MARK: - Helpers
