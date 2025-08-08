@@ -8,46 +8,6 @@
 import XCTest
 import EssentialFeed
 
-protocol FeedStore {
-    typealias DeletionCompletion = (Result<Void, Error>) -> Void
-    typealias InsertionCompletion = (Result<Void, Error>) -> Void
-    
-    func deleteCacheFeed(completion: @escaping DeletionCompletion)
-    func insert(_ items: [FeedItem], timestamp: Date, completion: @escaping InsertionCompletion)
-}
-
-final class LocalFeedLoader {
-    
-    private let store: FeedStore
-    private let currentDate: () -> Date
-    
-    init(store: FeedStore,
-         currentDate: @escaping () -> Date) {
-        self.store = store
-        self.currentDate = currentDate
-    }
-    
-    func save(_ items: [FeedItem], completion: @escaping (Result<Void, Error>) -> Void) {
-        store.deleteCacheFeed() { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success():
-                cache(items, with: completion)
-            case .failure(let deletionError):
-                completion(.failure(deletionError))
-            }
-        }
-    }
-    
-    private func cache(_ items: [FeedItem], with completion: @escaping (Result<Void, Error>) -> Void) {
-        store.insert(items, timestamp: currentDate(), completion: { [weak self] result in
-            guard self != nil else { return }
-            completion(result)
-        })
-    }
-
-}
-
 final class CacheFeedUseCaseTests: XCTestCase {
     
     func test_init_doesNotMessageStoreUponCreation() {
