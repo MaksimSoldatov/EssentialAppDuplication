@@ -14,8 +14,8 @@ final class FeedStore {
         case insert(items: [FeedItem], timestamp: Date)
     }
     
-    typealias DeletionCompletion = (Result<(), Error>) -> Void
-    typealias InsertionCompletion = (Result<(), Error>) -> Void
+    typealias DeletionCompletion = (Result<Void, Error>) -> Void
+    typealias InsertionCompletion = (Result<Void, Error>) -> Void
     private var deletionCompletions = [DeletionCompletion]()
     private var insertionCompletions = [InsertionCompletion]()
     private(set) var receivedMessages = [ReceivedMessages]()
@@ -41,7 +41,10 @@ final class FeedStore {
     func completeInsertion(with error: NSError, at index: Int = 0) {
         insertionCompletions[index](.failure(error))
     }
-
+    
+    func completeInsertionSuccessfully(at index: Int = 0) {
+        insertionCompletions[index](.success(()))
+    }
 }
 
 final class LocalFeedLoader {
@@ -112,7 +115,6 @@ final class CacheFeedUseCaseTests: XCTestCase {
         XCTAssertEqual(store.receivedMessages, [.deleteCachedFeed, .insert(items: items, timestamp: timestamp)])
     }
     
-    
     func test_save_failOnDeletionError() {
         let items = [uniqueItem(), uniqueItem()]
         let (sut, store) = makeSUT()
@@ -153,7 +155,26 @@ final class CacheFeedUseCaseTests: XCTestCase {
         
         XCTAssertEqual(receivedError as? NSError, insertionError)
     }
+    
+    func test_save_succeedsOnSuccessfulCacheInsertion() {
+        let items = [uniqueItem(), uniqueItem()]
+        let (sut, store) = makeSUT()
 
+        let exp = expectation(description: "Wait for save completion")
+        var receivedError: Error?
+        
+        sut.save(items) { result in
+            if case let .failure(error) = result {
+                receivedError = error
+            }
+            exp.fulfill()
+        }
+        store.completeDeletionSuccessfully()
+        store.completeInsertionSuccessfully()
+        wait(for: [exp], timeout: 1.0)
+        
+        XCTAssertNil(receivedError)
+    }
     
     // MARK: - Helpers
     
