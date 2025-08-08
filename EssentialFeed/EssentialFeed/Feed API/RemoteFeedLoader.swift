@@ -5,10 +5,9 @@
 import Foundation
 
 public protocol HTTPClient {
-    typealias Result = Swift.Result<(data: Data, response: HTTPURLResponse), Error>
-    func get(from url: URL, completion: @escaping (Result) -> Void)
+    typealias Result = Swift.Result<(data: Data, response: HTTPURLResponse), Swift.Error>
     
-    func get(from url: URL) async throws -> (data: Data, response: HTTPURLResponse)
+    func get(from url: URL, completion: @escaping (Result) -> Void)
 }
 
 public final class RemoteFeedLoader: FeedLoader {
@@ -20,36 +19,31 @@ public final class RemoteFeedLoader: FeedLoader {
         case connectivity
         case invalidData
     }
-
+    
     public init(url: URL, client: HTTPClient) {
         self.url = url
         self.client = client
     }
-
+    
     public func load(completion: @escaping (FeedLoader.Result) -> Void) {
-        client.get(from: url) { [weak self] result in
+        client.get(from: url, completion: { [weak self] (result: HTTPClient.Result) in
             guard self != nil else { return }
             switch result {
             case let .success((data, response)):
-                completion(FeedItemsMapper.map(data, response: response))
+                completion(RemoteFeedLoader.map(data, response))
             case .failure:
                 completion(.failure(.connectivity))
             }
-        }
+        })
     }
     
-    public func load() async throws -> [FeedItem] {
-        
-        guard let result = try? await client.get(from: url) else {
-            throw RemoteFeedLoader.Error.connectivity
+    private static func map(_ data: Data, _ response: HTTPURLResponse) -> FeedLoader.Result {
+        do {
+            let items = try FeedItemsMapper.map(data, response: response)
+            return .success(items.toModels())
+        } catch {
+            return .failure(.invalidData)
         }
-
-        if let items = try? FeedItemsMapper.throwsMap(result.data, response: result.response) {
-            return items
-        } else {
-            throw RemoteFeedLoader.Error.invalidData
-        }
-        
     }
 }
 
@@ -59,3 +53,8 @@ extension HTTPURLResponse {
     }
 }
 
+private extension Array where Element == RemoteFeedItem {
+    func toModels() -> [FeedImage] {
+        map({ FeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.image)})
+    }
+}

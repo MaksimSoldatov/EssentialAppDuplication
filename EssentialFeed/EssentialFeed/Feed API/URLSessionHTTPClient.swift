@@ -25,14 +25,4 @@ public class URLSessionHTTPClient: HTTPClient {
             }
         }.resume()
     }
-    
-    public func get(from url: URL) async throws -> (data: Data, response: HTTPURLResponse) {
-        let (data, response) = try await session.data(from: url)
-            
-            guard let httpResponse = response as? HTTPURLResponse else {
-                throw UnexpectedValuesRepresentation()
-            }
-            
-            return (data, httpResponse)
-    }
 }
