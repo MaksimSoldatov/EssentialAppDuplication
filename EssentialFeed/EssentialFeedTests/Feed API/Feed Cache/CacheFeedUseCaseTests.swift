@@ -32,15 +32,20 @@ final class LocalFeedLoader {
             guard let self else { return }
             switch result {
             case .success():
-                store.insert(items, timestamp: currentDate(), completion: { [weak self] result in
-                    guard self != nil else { return }
-                    completion(result)
-                })
-            case .failure(let error):
-                completion(.failure(error))
+                cache(items, with: completion)
+            case .failure(let deletionError):
+                completion(.failure(deletionError))
             }
         }
     }
+    
+    private func cache(_ items: [FeedItem], with completion: @escaping (Result<Void, Error>) -> Void) {
+        store.insert(items, timestamp: currentDate(), completion: { [weak self] result in
+            guard self != nil else { return }
+            completion(result)
+        })
+    }
+
 }
 
 final class CacheFeedUseCaseTests: XCTestCase {
