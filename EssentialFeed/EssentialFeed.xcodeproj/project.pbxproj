@@ -60,6 +60,7 @@
 		726B5C7B2DD5AD4D004524E1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Helpers/SharedTestHelpers.swift,
 				"Helpers/XCTestCase+MemoryLeakTracking.swift",
 			);
 			target = 726B5C6F2DD5AB2C004524E1 /* EssentialFeedAPIEndToEndTests */;
