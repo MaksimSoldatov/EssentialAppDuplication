@@ -97,4 +97,3 @@ private extension Array where Element == LocalFeedImage {
                         url: $0.url) })
     }
 }
-

@@ -8,6 +8,7 @@
 import Foundation
 
 public protocol FeedStore {
+    
     typealias DeletionCompletion = (Result<Void, Error>) -> Void
     typealias InsertionCompletion = (Result<Void, Error>) -> Void
     typealias RetrieveCompletion = (Result<([LocalFeedImage], Date), Error>) -> Void

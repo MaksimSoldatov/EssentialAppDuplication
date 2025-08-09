@@ -1,11 +1,11 @@
 //
 // FeedItemsMapper.swift created 13.05.25.
 //
+
 import Foundation
 
-
-
 enum FeedItemsMapper {
+    
     private struct Root: Decodable {
         let items: [RemoteFeedItem]
     }

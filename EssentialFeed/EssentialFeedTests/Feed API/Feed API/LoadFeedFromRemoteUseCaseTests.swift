@@ -5,26 +5,26 @@
 import XCTest
 import EssentialFeed
 
-class LoadFeedFromRemoteUseCaseTests: XCTestCase {
-
+final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
+    
     func test_init_doesNotRequestDataFromURL() {
         let (_, client) = makeSUT()
-
+        
         XCTAssertTrue(client.requestedURLs.isEmpty)
     }
-
+    
     func test_load_requestsDataFromURL() {
         let url = URL(string: "https://a-given-url.com")!
         let (sut, client) = makeSUT(url: url)
-
+        
         sut.load() { _ in }
-
+        
         XCTAssertEqual(client.requestedURLs, [url])
     }
     
     func test_load_deliversErrorOnClientError() {
         let (sut, client) = makeSUT()
-
+        
         expect(sut, toCompleteWith: .failure(RemoteFeedLoader.Error.connectivity), when: {
             let clientError = NSError(domain: "test", code: 1, userInfo: nil)
             client.complete(with: clientError)
@@ -91,7 +91,7 @@ class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         XCTAssertTrue(capturedResult.isEmpty)
     }
     // MARK: - Helpers
-
+    
     private func makeSUT(url: URL = URL(string: "https://a-url.com")!,
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: RemoteFeedLoader, client: HTTPClientSpy) {
@@ -142,9 +142,11 @@ class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         
         wait(for: [exp], timeout: 1.0)
     }
-
+    
     private class HTTPClientSpy: HTTPClient {
+        
         private var messages = [(url: URL, completion: (HTTPClient.Result) -> Void)]()
+        
         var requestedURLs: [URL] {
             messages.map { $0.url }
         }
@@ -169,5 +171,4 @@ class LoadFeedFromRemoteUseCaseTests: XCTestCase {
             fatalError("Will be tested in separate file")
         }
     }
-
 }

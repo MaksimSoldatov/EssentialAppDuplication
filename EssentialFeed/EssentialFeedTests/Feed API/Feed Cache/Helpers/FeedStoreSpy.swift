@@ -9,6 +9,7 @@ import Foundation
 import EssentialFeed
 
 final class FeedStoreSpy: FeedStore {
+    
     enum ReceivedMessages: Equatable {
         case deleteCachedFeed
         case insert(feed: [LocalFeedImage], timestamp: Date)
