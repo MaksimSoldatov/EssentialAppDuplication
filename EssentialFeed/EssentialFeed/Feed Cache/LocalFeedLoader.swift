@@ -51,10 +51,11 @@ public final class LocalFeedLoader {
         store.retrieve(completion: { [weak self] result in
             guard let self else { return }
             switch result {
-            case .success((_, let timestamp)):
-                break
+            case .success((_, let timestamp)) where !CachePolicy.isValid(timestamp, against: currentDate()):
+                store.deleteCacheFeed(completion: { _ in })
             case .failure(_):
                 store.deleteCacheFeed(completion: { _ in })
+            default: break
             }
         })
     }
