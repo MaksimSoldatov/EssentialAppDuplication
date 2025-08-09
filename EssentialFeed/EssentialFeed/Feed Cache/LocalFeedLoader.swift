@@ -9,7 +9,6 @@ import Foundation
 
 public final class LocalFeedLoader {
     public typealias SaveResult = (Result<Void, Error>) -> Void
-    public typealias RetrieveResult = (Result<[FeedImage], Error>) -> Void
     
     private let store: FeedStore
     private let currentDate: () -> Date
@@ -21,9 +20,8 @@ public final class LocalFeedLoader {
     }
 }
 
-extension LocalFeedLoader {
-    
-    public func load(completion: @escaping RetrieveResult) {
+extension LocalFeedLoader: FeedLoader {
+    public func load(completion: @escaping (FeedLoader.Result) -> Void) {
         store.retrieve { [weak self] result in
             guard let self else { return }
             switch result {

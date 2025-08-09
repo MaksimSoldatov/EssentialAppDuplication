@@ -25,7 +25,7 @@ class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     func test_load_deliversErrorOnClientError() {
         let (sut, client) = makeSUT()
 
-        expect(sut, toCompleteWith: .failure(.connectivity), when: {
+        expect(sut, toCompleteWith: .failure(RemoteFeedLoader.Error.connectivity), when: {
             let clientError = NSError(domain: "test", code: 1, userInfo: nil)
             client.complete(with: clientError)
         })
@@ -36,7 +36,7 @@ class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         
         let samples = [199, 201, 300, 400, 500]
         samples.enumerated().forEach { index, statusCode in
-            expect(sut, toCompleteWith: .failure(.invalidData), when: {
+            expect(sut, toCompleteWith: .failure(RemoteFeedLoader.Error.invalidData), when: {
                 let emptyJSON = makeItemsJSON([])
                 client.complete(withStatusCode: statusCode, data: emptyJSON, at: index)
             }, file: #file, line: #line)
@@ -46,7 +46,7 @@ class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     func test_load_deliversErrorOn200HTTPResponseWithInvalidJSON() {
         let (sut, client) = makeSUT()
         
-        expect(sut, toCompleteWith: .failure(.invalidData), when: {
+        expect(sut, toCompleteWith: .failure(RemoteFeedLoader.Error.invalidData), when: {
             let invalidJSON = Data("Invalid JSON".utf8)
             client.complete(withStatusCode: 200, data: invalidJSON)
         }, file: #file, line: #line)
@@ -130,7 +130,7 @@ class LoadFeedFromRemoteUseCaseTests: XCTestCase {
             case (.success(let capturedItems), .success(let expectedItems)):
                 XCTAssertEqual(capturedItems, expectedItems, file: file, line: line)
             case (.failure(let capturedError), .failure(let expectedError)):
-                XCTAssertEqual(capturedError, expectedError, file: file, line: line)
+                XCTAssertEqual(capturedError as NSError , expectedError as NSError, file: file, line: line)
             default:
                 XCTFail("Expected success but got failure", file: file, line: line)
             }
