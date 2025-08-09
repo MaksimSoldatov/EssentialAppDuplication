@@ -44,6 +44,7 @@ public final class LocalFeedLoader {
                 store.deleteCacheFeed(completion: { _ in })
                 completion(.failure(error))
             default:
+                store.deleteCacheFeed(completion: { _ in })
                 completion(.success([]))
             }
         })
