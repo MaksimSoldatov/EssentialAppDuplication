@@ -8,7 +8,6 @@
 import Foundation
 
 public final class LocalFeedLoader {
-    public typealias SaveResult = (Result<Void, Error>) -> Void
     
     private let store: FeedStore
     private let currentDate: () -> Date
@@ -21,6 +20,7 @@ public final class LocalFeedLoader {
 }
 
 extension LocalFeedLoader: FeedLoader {
+    
     public func load(completion: @escaping (FeedLoader.Result) -> Void) {
         store.retrieve { [weak self] result in
             guard let self else { return }
@@ -54,6 +54,8 @@ extension LocalFeedLoader {
 
 extension LocalFeedLoader {
     
+    public typealias SaveResult = (Result<Void, Error>) -> Void
+    
     public func save(_ feed: [FeedImage], completion: @escaping SaveResult) {
         store.deleteCacheFeed() { [weak self] result in
             guard let self else { return }
@@ -77,7 +79,9 @@ extension LocalFeedLoader {
 }
 
 enum CachePolicy {
+    
     private static let maxCacheAgeInDays: Int = 7
+    
     static func isValid(_ timestamp: Date, against date: Date) -> Bool {
         guard let maxCacheAge = Calendar.current.date(byAdding: .day,
                                                       value: maxCacheAgeInDays,
@@ -89,6 +93,7 @@ enum CachePolicy {
 }
 
 private extension Array where Element == FeedImage {
+    
     func toLocal() -> [LocalFeedImage] {
         map({ LocalFeedImage(id: $0.id,
                             description: $0.description,
@@ -98,6 +103,7 @@ private extension Array where Element == FeedImage {
 }
 
 private extension Array where Element == LocalFeedImage {
+    
     func toModel() -> [FeedImage] {
         map({ FeedImage(id: $0.id,
                         description: $0.description,
