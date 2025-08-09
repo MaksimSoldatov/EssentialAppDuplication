@@ -10,7 +10,7 @@ import Foundation
 public final class LocalFeedLoader {
     
     public typealias SaveResult = (Result<Void, Error>) -> Void
-    public typealias RetrieveResult = (Result<[LocalFeedImage], Error>) -> Void
+    public typealias RetrieveResult = (Result<[FeedImage], Error>) -> Void
     
     private let store: FeedStore
     private let currentDate: () -> Date
@@ -34,7 +34,16 @@ public final class LocalFeedLoader {
     }
     
     public func load(completion: @escaping RetrieveResult) {
-        store.retrieve(completion: completion)
+        store.retrieve(completion: { [weak self] result in
+            guard self != nil else { return }
+            switch result {
+            case let .success((feed, _)):
+                completion(.success(feed.toModel()))
+            case let .failure(error):
+                completion(.failure(error))
+                
+            }
+        })
     }
     
     private func cache(_ feed: [FeedImage], with completion: @escaping SaveResult) {
@@ -53,5 +62,14 @@ private extension Array where Element == FeedImage {
                             description: $0.description,
                             location: $0.location,
                             url: $0.url) })
+    }
+}
+
+private extension Array where Element == LocalFeedImage {
+    func toModel() -> [FeedImage] {
+        map({ FeedImage(id: $0.id,
+                        description: $0.description,
+                        location: $0.location,
+                        url: $0.url) })
     }
 }
