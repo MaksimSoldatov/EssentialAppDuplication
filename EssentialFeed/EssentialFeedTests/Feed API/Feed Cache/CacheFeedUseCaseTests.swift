@@ -149,12 +149,4 @@ final class CacheFeedUseCaseTests: XCTestCase {
     private func uniqueImage() -> FeedImage {
         FeedImage(id: UUID(), description: nil, location: nil, url: anyURL())
     }
-    
-    private func anyURL() -> URL {
-        URL(string: "http://any-url.com")!
-    }
-    
-    private func anyNSError() -> NSError {
-        NSError(domain: "any error", code: 0)
-    }
 }

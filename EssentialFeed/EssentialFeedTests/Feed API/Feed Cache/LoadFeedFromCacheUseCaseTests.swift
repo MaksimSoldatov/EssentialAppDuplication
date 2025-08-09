@@ -126,6 +126,19 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedFeed])
     }
     
+    func test_load_doesNotDeliverResultAfterSUTInstanceHasBeenDeallocated() {
+        let store = FeedStoreSpy()
+        var sut: LocalFeedLoader? = LocalFeedLoader(store: store, currentDate: Date.init)
+        
+        var receivedResults = [Result<[FeedImage], Error>]()
+        sut?.load { receivedResults.append($0) }
+        
+        sut = nil
+        store.completeRetrieval(with: .success([]))
+        
+        XCTAssertTrue(receivedResults.isEmpty)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init,
@@ -174,14 +187,6 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
     
     private func uniqueImage() -> FeedImage {
         FeedImage(id: UUID(), description: nil, location: nil, url: anyURL())
-    }
-    
-    private func anyNSError() -> NSError {
-        NSError(domain: "any error", code: 0)
-    }
-    
-    private func anyURL() -> URL {
-        URL(string: "http://any-url.com")!
     }
 }
 

@@ -14,7 +14,6 @@ public final class LocalFeedLoader {
     
     private let store: FeedStore
     private let currentDate: () -> Date
-    private var maxCachedAgeInDays: Int { 7 }
     
     public init(store: FeedStore,
                 currentDate: @escaping () -> Date) {
@@ -35,28 +34,23 @@ public final class LocalFeedLoader {
     }
     
     public func load(completion: @escaping RetrieveResult) {
-        store.retrieve(completion: { [weak self] result in
+        store.retrieve { [weak self] result in
             guard let self else { return }
             switch result {
-            case let .success((feed, timestamp)) where validate(timestamp):
+            case let .success((feed, timestamp)) where CachePolicy.isValid(timestamp, against: currentDate()):
                 completion(.success(feed.toModel()))
             case let .failure(error):
-                store.deleteCacheFeed(completion: { _ in })
+                cleanCache()
                 completion(.failure(error))
-            default:
-                store.deleteCacheFeed(completion: { _ in })
+            case .success:
+                cleanCache()
                 completion(.success([]))
             }
-        })
+        }
     }
    
-    private func validate(_ timestamp: Date) -> Bool {
-        guard let maxCacheAge = Calendar.current.date(byAdding: .day,
-                                                      value: maxCachedAgeInDays,
-                                                      to: timestamp) else {
-            return false
-        }
-        return currentDate() < maxCacheAge
+    private func cleanCache() {
+        store.deleteCacheFeed { _ in }
     }
     
     private func cache(_ feed: [FeedImage], with completion: @escaping SaveResult) {
@@ -66,6 +60,20 @@ public final class LocalFeedLoader {
             guard self != nil else { return }
             completion(result)
         })
+    }
+}
+
+private extension LocalFeedLoader {
+    struct CachePolicy {
+        private static let maxCacheAgeInDays: Int = 7
+        static func isValid(_ timestamp: Date, against date: Date) -> Bool {
+            guard let maxCacheAge = Calendar.current.date(byAdding: .day,
+                                                          value: maxCacheAgeInDays,
+                                                          to: timestamp) else {
+                return false
+            }
+            return date < maxCacheAge
+        }
     }
 }
 
