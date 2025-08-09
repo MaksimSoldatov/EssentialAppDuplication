@@ -40,17 +40,23 @@ public final class LocalFeedLoader {
             case let .success((feed, timestamp)) where CachePolicy.isValid(timestamp, against: currentDate()):
                 completion(.success(feed.toModel()))
             case let .failure(error):
-                cleanCache()
                 completion(.failure(error))
             case .success:
-                cleanCache()
                 completion(.success([]))
             }
         }
     }
    
-    private func cleanCache() {
-        store.deleteCacheFeed { _ in }
+    public func validateCache() {
+        store.retrieve(completion: { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success((_, let timestamp)):
+                break
+            case .failure(_):
+                store.deleteCacheFeed(completion: { _ in })
+            }
+        })
     }
     
     private func cache(_ feed: [FeedImage], with completion: @escaping SaveResult) {
