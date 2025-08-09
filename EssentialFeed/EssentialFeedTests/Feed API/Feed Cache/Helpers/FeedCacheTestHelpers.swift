@@ -22,6 +22,14 @@ func uniqueImage() -> FeedImage {
 }
 
 extension Date {
+    
+    private var feedCacheMaxAgeInDays: Int {
+        return 7
+    }
+    
+    func minusFeedCacheMaxAge() -> Date {
+        return adding(days: -feedCacheMaxAgeInDays)
+    }
     func adding(days: Int) -> Date {
         Calendar.current.date(byAdding: .day, value: days, to: self)!
     }

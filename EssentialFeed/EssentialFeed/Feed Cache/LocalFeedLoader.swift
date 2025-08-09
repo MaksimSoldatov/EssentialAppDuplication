@@ -25,7 +25,7 @@ extension LocalFeedLoader: FeedLoader {
         store.retrieve { [weak self] result in
             guard let self else { return }
             switch result {
-            case let .success((feed, timestamp)) where CachePolicy.isValid(timestamp, against: currentDate()):
+            case let .success((feed, timestamp)) where FeedCachePolicy.isValid(timestamp, against: currentDate()):
                 completion(.success(feed.toModel()))
             case let .failure(error):
                 completion(.failure(error))
@@ -42,7 +42,7 @@ extension LocalFeedLoader {
         store.retrieve(completion: { [weak self] result in
             guard let self else { return }
             switch result {
-            case .success((_, let timestamp)) where !CachePolicy.isValid(timestamp, against: currentDate()):
+            case .success((_, let timestamp)) where !FeedCachePolicy.isValid(timestamp, against: currentDate()):
                 store.deleteCacheFeed(completion: { _ in })
             case .failure(_):
                 store.deleteCacheFeed(completion: { _ in })
@@ -78,20 +78,6 @@ extension LocalFeedLoader {
     }
 }
 
-enum CachePolicy {
-    
-    private static let maxCacheAgeInDays: Int = 7
-    
-    static func isValid(_ timestamp: Date, against date: Date) -> Bool {
-        guard let maxCacheAge = Calendar.current.date(byAdding: .day,
-                                                      value: maxCacheAgeInDays,
-                                                      to: timestamp) else {
-            return false
-        }
-        return date < maxCacheAge
-    }
-}
-
 private extension Array where Element == FeedImage {
     
     func toLocal() -> [LocalFeedImage] {
@@ -111,3 +97,4 @@ private extension Array where Element == LocalFeedImage {
                         url: $0.url) })
     }
 }
+
