@@ -41,6 +41,7 @@ public final class LocalFeedLoader {
             case let .success((feed, timestamp)) where validate(timestamp):
                 completion(.success(feed.toModel()))
             case let .failure(error):
+                store.deleteCacheFeed(completion: { _ in })
                 completion(.failure(error))
             default:
                 completion(.success([]))
