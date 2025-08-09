@@ -8,7 +8,6 @@
 import Foundation
 
 public final class LocalFeedLoader {
-    
     public typealias SaveResult = (Result<Void, Error>) -> Void
     public typealias RetrieveResult = (Result<[FeedImage], Error>) -> Void
     
@@ -20,18 +19,9 @@ public final class LocalFeedLoader {
         self.store = store
         self.currentDate = currentDate
     }
-    
-    public func save(_ feed: [FeedImage], completion: @escaping SaveResult) {
-        store.deleteCacheFeed() { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success():
-                cache(feed, with: completion)
-            case .failure(let deletionError):
-                completion(.failure(deletionError))
-            }
-        }
-    }
+}
+
+extension LocalFeedLoader {
     
     public func load(completion: @escaping RetrieveResult) {
         store.retrieve { [weak self] result in
@@ -46,7 +36,10 @@ public final class LocalFeedLoader {
             }
         }
     }
-   
+}
+
+extension LocalFeedLoader {
+    
     public func validateCache() {
         store.retrieve(completion: { [weak self] result in
             guard let self else { return }
@@ -59,6 +52,21 @@ public final class LocalFeedLoader {
             }
         })
     }
+}
+
+extension LocalFeedLoader {
+    
+    public func save(_ feed: [FeedImage], completion: @escaping SaveResult) {
+        store.deleteCacheFeed() { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success():
+                cache(feed, with: completion)
+            case .failure(let deletionError):
+                completion(.failure(deletionError))
+            }
+        }
+    }
     
     private func cache(_ feed: [FeedImage], with completion: @escaping SaveResult) {
         store.insert(feed.toLocal(),
@@ -70,17 +78,15 @@ public final class LocalFeedLoader {
     }
 }
 
-private extension LocalFeedLoader {
-    struct CachePolicy {
-        private static let maxCacheAgeInDays: Int = 7
-        static func isValid(_ timestamp: Date, against date: Date) -> Bool {
-            guard let maxCacheAge = Calendar.current.date(byAdding: .day,
-                                                          value: maxCacheAgeInDays,
-                                                          to: timestamp) else {
-                return false
-            }
-            return date < maxCacheAge
+enum CachePolicy {
+    private static let maxCacheAgeInDays: Int = 7
+    static func isValid(_ timestamp: Date, against date: Date) -> Bool {
+        guard let maxCacheAge = Calendar.current.date(byAdding: .day,
+                                                      value: maxCacheAgeInDays,
+                                                      to: timestamp) else {
+            return false
         }
+        return date < maxCacheAge
     }
 }
 
