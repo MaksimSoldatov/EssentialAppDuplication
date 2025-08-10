@@ -16,7 +16,7 @@ public final class CoreDataFeedStore: FeedStore {
         container = try NSPersistentContainer.load(modelName: "FeedStore", url: storeURL, in: bundle)
         context = container.newBackgroundContext()
     }
-
+    
     public func retrieve(_ completion: @escaping RetrievalCompletion) {
         let context = self.context
         context.perform {
@@ -31,12 +31,12 @@ public final class CoreDataFeedStore: FeedStore {
             }
         }
     }
-
+    
     public func insert(_ feed: [LocalFeedImage], timestamp: Date, _ completion: @escaping InsertionCompletion) {
         let context = self.context
         context.perform {
             do {
-                let managedCache = ManagedCache(context: context)
+                let managedCache = try ManagedCache.newUniqueInstance(in: context)
                 managedCache.timestamp = timestamp
                 managedCache.feed = ManagedFeedImage.images(from: feed, in: context)
                 
@@ -48,9 +48,9 @@ public final class CoreDataFeedStore: FeedStore {
         }
         
     }
-
+    
     public func deleteCachedFeed(_ completion: @escaping DeletionCompletion) {
-
+        completion(.success(()))
     }
 }
 
@@ -59,7 +59,7 @@ private extension NSPersistentContainer {
         case modelNotFound
         case failedToLoadPersistentStores(Swift.Error)
     }
-
+    
     static func load(modelName name: String,
                      url: URL,
                      in bundle: Bundle) throws -> NSPersistentContainer {
@@ -74,7 +74,7 @@ private extension NSPersistentContainer {
         var loadError: Swift.Error?
         container.loadPersistentStores { loadError = $1 }
         try loadError.map { throw LoadingError.failedToLoadPersistentStores($0) }
-
+        
         return container
     }
 }
@@ -96,6 +96,11 @@ private class ManagedCache: NSManagedObject {
         let request = NSFetchRequest<ManagedCache>(entityName: entity().name!)
         request.returnsObjectsAsFaults = false
         return try context.fetch(request).first
+    }
+    
+    static func newUniqueInstance(in context: NSManagedObjectContext) throws -> ManagedCache {
+        try find(in: context).map(context.delete)
+        return ManagedCache(context: context)
     }
     
     var localFeed: [LocalFeedImage] {

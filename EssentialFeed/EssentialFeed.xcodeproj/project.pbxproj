@@ -25,6 +25,20 @@
 		72B6651B2E48CC5B00039514 /* CoreDataFeedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665192E48CC4400039514 /* CoreDataFeedStore.swift */; };
 		72B665582E48CCF700039514 /* SharedTestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665562E48CCF700039514 /* SharedTestHelpers.swift */; };
 		72B665592E48CCF700039514 /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665572E48CCF700039514 /* XCTestCase+MemoryLeakTracking.swift */; };
+		72B665622E48D5C200039514 /* CoreDataFeedStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665532E48CCD400039514 /* CoreDataFeedStoreTests.swift */; };
+		72B665632E48D5EC00039514 /* XCTestCase+FailableRetrieveFeedStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B6654B2E48CCD400039514 /* XCTestCase+FailableRetrieveFeedStoreSpecs.swift */; };
+		72B665642E48D5F400039514 /* XCTestCase+FailableDeleteFeedStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665492E48CCD400039514 /* XCTestCase+FailableDeleteFeedStoreSpecs.swift */; };
+		72B665652E48D5F400039514 /* XCTestCase+FailableInsertFeedStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B6654A2E48CCD400039514 /* XCTestCase+FailableInsertFeedStoreSpecs.swift */; };
+		72B665662E48D5F400039514 /* XCTestCase+FeedStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B6654C2E48CCD400039514 /* XCTestCase+FeedStoreSpecs.swift */; };
+		72B665672E48D5FC00039514 /* LoadFeedFromCacheUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665542E48CCD400039514 /* LoadFeedFromCacheUseCaseTests.swift */; };
+		72B665682E48D5FC00039514 /* ValidateFeedCacheUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665552E48CCD400039514 /* ValidateFeedCacheUseCaseTests.swift */; };
+		72B665692E48D5FC00039514 /* CodableFeedStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665522E48CCD400039514 /* CodableFeedStoreTests.swift */; };
+		72B6656A2E48D5FC00039514 /* CacheFeedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665512E48CCD400039514 /* CacheFeedUseCaseTests.swift */; };
+		72B6656B2E48D60300039514 /* FeedCacheTestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B6654E2E48CCD400039514 /* FeedCacheTestHelpers.swift */; };
+		72B6656C2E48D60300039514 /* FeedStoreSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B6654F2E48CCD400039514 /* FeedStoreSpy.swift */; };
+		72B6656D2E48D60B00039514 /* LoadFeedFromRemoteUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665462E48CCA400039514 /* LoadFeedFromRemoteUseCaseTests.swift */; };
+		72B6656E2E48D60B00039514 /* URLSessionHTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665472E48CCA400039514 /* URLSessionHTTPClientTests.swift */; };
+		72B6656F2E48D63100039514 /* FeedStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665482E48CCD400039514 /* FeedStoreSpecs.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -428,8 +442,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72B6656D2E48D60B00039514 /* LoadFeedFromRemoteUseCaseTests.swift in Sources */,
+				72B6656E2E48D60B00039514 /* URLSessionHTTPClientTests.swift in Sources */,
+				72B665672E48D5FC00039514 /* LoadFeedFromCacheUseCaseTests.swift in Sources */,
+				72B665682E48D5FC00039514 /* ValidateFeedCacheUseCaseTests.swift in Sources */,
+				72B665692E48D5FC00039514 /* CodableFeedStoreTests.swift in Sources */,
+				72B6656A2E48D5FC00039514 /* CacheFeedUseCaseTests.swift in Sources */,
+				72B665642E48D5F400039514 /* XCTestCase+FailableDeleteFeedStoreSpecs.swift in Sources */,
+				72B665652E48D5F400039514 /* XCTestCase+FailableInsertFeedStoreSpecs.swift in Sources */,
+				72B665662E48D5F400039514 /* XCTestCase+FeedStoreSpecs.swift in Sources */,
 				72B665582E48CCF700039514 /* SharedTestHelpers.swift in Sources */,
+				72B665632E48D5EC00039514 /* XCTestCase+FailableRetrieveFeedStoreSpecs.swift in Sources */,
 				72B665592E48CCF700039514 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
+				72B6656B2E48D60300039514 /* FeedCacheTestHelpers.swift in Sources */,
+				72B6656C2E48D60300039514 /* FeedStoreSpy.swift in Sources */,
+				72B6656F2E48D63100039514 /* FeedStoreSpecs.swift in Sources */,
+				72B665622E48D5C200039514 /* CoreDataFeedStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
