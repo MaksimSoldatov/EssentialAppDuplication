@@ -8,22 +8,7 @@
 import XCTest
 import EssentialFeed
 
-public final class CoreDataFeedStore: FeedStore {
-    public init() {}
 
-    public func retrieve(_ completion: @escaping RetrievalCompletion) {
-        completion(.success(([], nil)))
-    }
-
-    public func insert(_ feed: [LocalFeedImage], timestamp: Date, _ completion: @escaping InsertionCompletion) {
-
-    }
-
-    public func deleteCachedFeed(_ completion: @escaping DeletionCompletion) {
-
-    }
-
-}
 
 class CoreDataFeedStoreTests: XCTestCase, FeedStoreSpecs {
     
@@ -80,7 +65,8 @@ class CoreDataFeedStoreTests: XCTestCase, FeedStoreSpecs {
     // - MARK: Helpers
 
     private func makeSUT(file: StaticString = #file, line: UInt = #line) -> FeedStore {
-        let sut = CoreDataFeedStore()
+        let storeBundle = Bundle(for: CoreDataFeedStore.self)
+        let sut = try! CoreDataFeedStore(bundle: storeBundle)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
