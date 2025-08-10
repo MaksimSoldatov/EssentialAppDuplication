@@ -18,7 +18,7 @@ public final class CodableFeedStore: FeedStore {
         self.storeURL = storeURL
     }
     
-    public func deleteCachedFeed(_ completion: @escaping DeletionCompletion) {
+    public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
         let storeURL = storeURL
         queue.async(flags: .barrier) {
             guard FileManager.default.fileExists(atPath: storeURL.path) else {
@@ -36,10 +36,13 @@ public final class CodableFeedStore: FeedStore {
     
     public func insert(_ feed: [EssentialFeed.LocalFeedImage],
                        timestamp: Date,
-                       _ completion: @escaping InsertionCompletion) {
+                       completion: @escaping InsertionCompletion) {
         let storeURL = storeURL
         queue.async(flags: .barrier) {
             do {
+                try FileManager.default.createDirectory(at: storeURL.deletingLastPathComponent(),
+                                                      withIntermediateDirectories: true)
+                
                 let encoder = JSONEncoder()
                 let cache = Cache(feed: feed.map(CodableFeedImage.init), timestamp: timestamp)
                 let encoded = try encoder.encode(cache)
@@ -51,17 +54,18 @@ public final class CodableFeedStore: FeedStore {
         }
     }
     
-    public func retrieve(_ completion: @escaping RetrievalCompletion) {
+    public func retrieve(completion: @escaping RetrievalCompletion) {
         let storeURL = storeURL
         queue.async {
-            guard let data = try? Data(contentsOf: storeURL) else {
-                return completion(.success(([], nil)))
+            guard FileManager.default.fileExists(atPath: storeURL.path) else {
+                return completion(.success(.none))
             }
             
             do {
+                let data = try Data(contentsOf: storeURL)
                 let decoder = JSONDecoder()
                 let cache = try decoder.decode(Cache.self, from: data)
-                completion(.success((cache.localFeed, cache.timestamp)))
+                completion(.success((feed: cache.localFeed, timestamp: cache.timestamp)))
             } catch {
                 completion(.failure(error))
             }

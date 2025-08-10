@@ -48,6 +48,7 @@ final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
         let storeURL = testSpecificStoreURL()
         let sut = makeSUT(storeURL: storeURL)
         
+        try! FileManager.default.createDirectory(at: storeURL.deletingLastPathComponent(), withIntermediateDirectories: true)
         try! "invalid data".write(to: storeURL, atomically: false, encoding: .utf8)
         
         assertThatRetrieveDeliversFailureOnRetrievalError(on: sut)
@@ -57,6 +58,7 @@ final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
         let storeURL = testSpecificStoreURL()
         let sut = makeSUT(storeURL: storeURL)
         
+        try! FileManager.default.createDirectory(at: storeURL.deletingLastPathComponent(), withIntermediateDirectories: true)
         try! "invalid data".write(to: storeURL, atomically: false, encoding: .utf8)
         
         assertThatRetrieveHasNoSideEffectsOnFailure(on: sut)
@@ -119,10 +121,17 @@ final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
     }
     
     func test_delete_deliversErrorOnDeletionError() {
-        let noDeletePermissionURL = cachesDirectory()
-        let sut = makeSUT(storeURL: noDeletePermissionURL)
+        let storeURL = testSpecificStoreURL()
+        let sut = makeSUT(storeURL: storeURL)
+        
+        try! FileManager.default.createDirectory(at: storeURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try! "test data".write(to: storeURL, atomically: false, encoding: .utf8)
+        
+        try! FileManager.default.setAttributes([.immutable: true], ofItemAtPath: storeURL.path)
         
         assertThatDeleteDeliversErrorOnDeletionError(on: sut)
+
+        try! FileManager.default.setAttributes([.immutable: false], ofItemAtPath: storeURL.path)
     }
     
     func test_delete_hasNoSideEffectsOnDeletionError() {

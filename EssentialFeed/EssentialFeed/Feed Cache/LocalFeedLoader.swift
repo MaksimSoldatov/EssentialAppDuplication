@@ -25,11 +25,13 @@ extension LocalFeedLoader: FeedLoader {
         store.retrieve { [weak self] result in
             guard let self else { return }
             switch result {
-            case let .success((feed, timestamp)) where FeedCachePolicy.isValid(timestamp, against: currentDate()):
+            case let .success(.some((feed, timestamp))) where FeedCachePolicy.isValid(timestamp, against: currentDate()):
                 completion(.success(feed.toModel()))
             case let .failure(error):
                 completion(.failure(error))
-            case .success:
+            case .success(.none): // Handles empty cache
+                completion(.success([]))
+            case .success(.some((_, _))): // Handles invalid timestamp
                 completion(.success([]))
             }
         }
@@ -42,11 +44,12 @@ extension LocalFeedLoader {
         store.retrieve { [weak self] result in
             guard let self else { return }
             switch result {
-            case .success((_, let timestamp)) where !FeedCachePolicy.isValid(timestamp, against: currentDate()):
+            case .success(.some((_, let timestamp))) where !FeedCachePolicy.isValid(timestamp, against: currentDate()):
                 store.deleteCachedFeed { _ in }
             case .failure(_):
                 store.deleteCachedFeed { _ in }
-            default: break
+            case .success(.none): break
+            case .success(.some((_, _))): break // Valid timestamp case
             }
         }
     }
