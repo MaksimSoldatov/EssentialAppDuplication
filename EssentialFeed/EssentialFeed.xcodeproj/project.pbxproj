@@ -40,6 +40,8 @@
 		72B6656E2E48D60B00039514 /* URLSessionHTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665472E48CCA400039514 /* URLSessionHTTPClientTests.swift */; };
 		72B6656F2E48D63100039514 /* FeedStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665482E48CCD400039514 /* FeedStoreSpecs.swift */; };
 		72B665712E48D8DE00039514 /* CoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665702E48D8DE00039514 /* CoreDataHelpers.swift */; };
+		72B665732E48D94800039514 /* ManagedCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665722E48D94800039514 /* ManagedCache.swift */; };
+		72B665752E48D96200039514 /* ManagedFeedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B665742E48D96200039514 /* ManagedFeedImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,6 +100,8 @@
 		72B665562E48CCF700039514 /* SharedTestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTestHelpers.swift; sourceTree = "<group>"; };
 		72B665572E48CCF700039514 /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
 		72B665702E48D8DE00039514 /* CoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataHelpers.swift; sourceTree = "<group>"; };
+		72B665722E48D94800039514 /* ManagedCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedCache.swift; sourceTree = "<group>"; };
+		72B665742E48D96200039514 /* ManagedFeedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedFeedImage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -207,6 +211,7 @@
 		72B6655A2E48CD3B00039514 /* CoreDataFeedStore */ = {
 			isa = PBXGroup;
 			children = (
+				72B665762E48D97400039514 /* Models */,
 				72B665192E48CC4400039514 /* CoreDataFeedStore.swift */,
 				72B665162E48C9FF00039514 /* FeedStore.xcdatamodeld */,
 				72B665702E48D8DE00039514 /* CoreDataHelpers.swift */,
@@ -281,6 +286,15 @@
 				72B664EA2E48C8DC00039514 /* EssentialFeedAPIEndToEndTests.swift */,
 			);
 			path = EssentialFeedAPIEndToEndTests;
+			sourceTree = "<group>";
+		};
+		72B665762E48D97400039514 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				72B665742E48D96200039514 /* ManagedFeedImage.swift */,
+				72B665722E48D94800039514 /* ManagedCache.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -425,10 +439,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72B665732E48D94800039514 /* ManagedCache.swift in Sources */,
 				72B664432E45F95300039514 /* LocalFeedLoader.swift in Sources */,
 				080EDF0E21B6DCB600813479 /* FeedLoader.swift in Sources */,
 				72B6645A2E47CA8E00039514 /* FeedCachePolicy.swift in Sources */,
 				726B5C682DD45949004524E1 /* URLSessionHTTPClient.swift in Sources */,
+				72B665752E48D96200039514 /* ManagedFeedImage.swift in Sources */,
 				72B665712E48D8DE00039514 /* CoreDataHelpers.swift in Sources */,
 				729048EC2D9B061C00390E59 /* RemoteFeedLoader.swift in Sources */,
 				72B6644A2E46110400039514 /* LocalFeedImage.swift in Sources */,
