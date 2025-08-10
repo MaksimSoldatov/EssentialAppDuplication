@@ -39,16 +39,16 @@ extension LocalFeedLoader: FeedLoader {
 extension LocalFeedLoader {
     
     public func validateCache() {
-        store.retrieve(completion: { [weak self] result in
+        store.retrieve { [weak self] result in
             guard let self else { return }
             switch result {
             case .success((_, let timestamp)) where !FeedCachePolicy.isValid(timestamp, against: currentDate()):
-                store.deleteCacheFeed(completion: { _ in })
+                store.deleteCachedFeed { _ in }
             case .failure(_):
-                store.deleteCacheFeed(completion: { _ in })
+                store.deleteCachedFeed { _ in }
             default: break
             }
-        })
+        }
     }
 }
 
@@ -57,7 +57,7 @@ extension LocalFeedLoader {
     public typealias SaveResult = (Result<Void, Error>) -> Void
     
     public func save(_ feed: [FeedImage], completion: @escaping SaveResult) {
-        store.deleteCacheFeed() { [weak self] result in
+        store.deleteCachedFeed { [weak self] result in
             guard let self else { return }
             switch result {
             case .success():
@@ -82,9 +82,9 @@ private extension Array where Element == FeedImage {
     
     func toLocal() -> [LocalFeedImage] {
         map({ LocalFeedImage(id: $0.id,
-                            description: $0.description,
-                            location: $0.location,
-                            url: $0.url) })
+                             description: $0.description,
+                             location: $0.location,
+                             url: $0.url) })
     }
 }
 
